@@ -61,7 +61,7 @@
             <a href="/products/{{ product.id }}" class="product-card">
                 <div class="product-image-wrap">
                     <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy"
-                        onerror="this.src='https://via.placeholder.com/400x400/f5f5f5/111?text=Nike'">
+                        onerror="this.src='/static/images/placeholder.svg'">
                     {% if product.is_new %}
                     <span class="badge badge-new">New</span>
                     {% endif %}
@@ -133,7 +133,7 @@
             <a href="/products/{{ product.id }}" class="product-card">
                 <div class="product-image-wrap">
                     <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy"
-                        onerror="this.src='https://via.placeholder.com/400x400/f5f5f5/111?text=Nike'">
+                        onerror="this.src='/static/images/placeholder.svg'">
                     <span class="badge badge-new">New</span>
                 </div>
                 <div class="product-info">
