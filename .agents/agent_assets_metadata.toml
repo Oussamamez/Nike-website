@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "Qnz26VGlNCjNH-e9eC51N"
+uri = "file://Nike_eCommerce_Technical_Report.pdf"
+type = "pdf"
+title = "Nike eCommerce Platform -- Technical Report"
