@@ -20,7 +20,7 @@ class NikeReport(FPDF):
         self.set_text_color(180, 180, 180)
         self.set_font('Helvetica', '', 8)
         self.set_y(-12)
-        self.cell(0, 6, f'Nike eCommerce Technical Report  |  Confidential  |  Page {self.page_no()}', align='C')
+        self.cell(0, 6, f'Nike eCommerce Technical Report  |  Page {self.page_no()}', align='C')
         self.set_text_color(0, 0, 0)
 
     def section_title(self, num, title):
@@ -656,18 +656,6 @@ def build_pdf():
     ]
     for i, (k, v) in enumerate(future):
         pdf.kv_row(k, v, i % 2 == 0)
-
-    pdf.divider()
-    pdf.ln(4)
-    pdf.set_font('Helvetica', 'I', 9)
-    pdf.set_text_color(120, 120, 120)
-    pdf.multi_cell(0, 5.5,
-        'This technical report was generated on ' +
-        datetime.now().strftime('%B %d, %Y at %H:%M UTC') + '. '
-        'All architectural decisions reflect the current state of the codebase. '
-        'For questions or contributions, refer to the README.md in the project root.',
-        align='C'
-    )
 
     out = 'Nike_eCommerce_Technical_Report.pdf'
     pdf.output(out)
