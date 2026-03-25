@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed | Nike{% endblock %}
+
+{% block content %}
+<div class="confirmation-page">
+    <div class="confirmation-header">
+        <div class="checkmark-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        <h1>Order Confirmed!</h1>
+        <p class="confirmation-msg">Thank you, {{ order.shipping_first_name }}! Your order has been placed successfully.</p>
+        <div class="order-number-display">Order #{{ order.order_number }}</div>
+    </div>
+
+    <div class="confirmation-content">
+        <div class="confirmation-grid">
+            <div class="conf-section">
+                <h3>Order Details</h3>
+                <div class="conf-items">
+                    {% for item in order.items %}
+                    <div class="conf-item">
+                        <div class="conf-item-img-wrap">
+                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" class="conf-item-img"
+                                onerror="this.src='https://via.placeholder.com/80x80/f5f5f5/111?text=N'">
+                        </div>
+                        <div class="conf-item-info">
+                            <div class="conf-item-name">{{ item.product.name }}</div>
+                            <div class="conf-item-meta">Size: {{ item.size }} · Qty: {{ item.quantity }}</div>
+                        </div>
+                        <div class="conf-item-price">${{ "%.2f"|format(item.unit_price * item.quantity) }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="summary-rows" style="margin-top: 20px; border-top: 1px solid #e5e5e5; padding-top: 20px;">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>${{ "%.2f"|format(order.subtotal) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>{{ "FREE" if order.shipping == 0 else "$%.2f"|format(order.shipping) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax</span>
+                        <span>${{ "%.2f"|format(order.tax) }}</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Total</span>
+                        <span>${{ "%.2f"|format(order.total) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="conf-sidebar">
+                <div class="conf-info-card">
+                    <h3>Shipping To</h3>
+                    <p>{{ order.shipping_first_name }} {{ order.shipping_last_name }}</p>
+                    <p>{{ order.shipping_address }}</p>
+                    <p>{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip }}</p>
+                    <p>{{ order.shipping_country }}</p>
+                </div>
+
+                <div class="conf-info-card">
+                    <h3>Payment</h3>
+                    <p>{{ order.payment_brand }} ending in {{ order.payment_last4 }}</p>
+                    <p class="payment-charged">Amount charged: ${{ "%.2f"|format(order.total) }}</p>
+                </div>
+
+                <div class="conf-info-card">
+                    <h3>Estimated Delivery</h3>
+                    <p class="delivery-date">5-7 Business Days</p>
+                    <p style="color: #757575; font-size: 14px;">You'll receive a tracking email soon.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="confirmation-actions">
+            <a href="/orders" class="btn btn-dark">View All Orders</a>
+            <a href="/products" class="btn btn-outline">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | Nike{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumb" style="padding: 20px 0 0;">
+        <a href="/">Home</a> <span>/</span>
+        <a href="/products">Products</a> <span>/</span>
+        <a href="/products?category={{ product.category }}">{{ product.category }}</a> <span>/</span>
+        <span>{{ product.name }}</span>
+    </div>
+</div>
+
+<div class="product-detail-layout">
+    <div class="product-gallery">
+        <div class="main-image-wrap">
+            <img id="mainImage" src="{{ product.image_url }}" alt="{{ product.name }}" class="main-product-image"
+                onerror="this.src='https://via.placeholder.com/600x600/f5f5f5/111?text=Nike'">
+        </div>
+        {% if product.images and product.images|length > 1 %}
+        <div class="thumbnail-strip">
+            {% for img in product.images %}
+            <img src="{{ img }}" alt="" class="thumb {{ 'active' if loop.first else '' }}"
+                onclick="document.getElementById('mainImage').src=this.src;document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')">
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="product-detail-info">
+        {% if product.is_new %}
+        <span class="detail-badge badge-new">Just In</span>
+        {% endif %}
+        {% if product.is_sale %}
+        <span class="detail-badge badge-sale">Sale</span>
+        {% endif %}
+
+        <div class="product-detail-category">{{ product.subcategory or product.category }}</div>
+        <h1 class="product-detail-name">{{ product.name }}</h1>
+        <div class="product-detail-sku">{{ product.sku }}</div>
+
+        <div class="product-detail-rating">
+            <div class="stars">
+                {% for i in range(5) %}
+                <span class="star {{ 'filled' if i < product.rating|int else '' }}">★</span>
+                {% endfor %}
+            </div>
+            <span>{{ product.rating }} ({{ product.reviews_count }} Reviews)</span>
+        </div>
+
+        <div class="product-detail-price">
+            <span class="price-main">${{ "%.2f"|format(product.price) }}</span>
+            {% if product.original_price and product.original_price > product.price %}
+            <span class="price-original">${{ "%.2f"|format(product.original_price) }}</span>
+            <span class="price-save">Save ${{ "%.2f"|format(product.original_price - product.price) }}</span>
+            {% endif %}
+        </div>
+
+        {% if product.colors %}
+        <div class="option-group">
+            <div class="option-label">Color: <strong>{{ product.colors[0] }}</strong></div>
+            <div class="color-chips">
+                {% for color in product.colors %}
+                <span class="color-chip {{ 'active' if loop.first else '' }}" data-color="{{ color }}">{{ color }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <form action="/cart/add" method="post" class="add-to-cart-form">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+
+            <div class="option-group">
+                <div class="option-label-row">
+                    <span>Select Size</span>
+                    <a href="#" class="size-guide-link">Size Guide</a>
+                </div>
+                {% if product.available_sizes %}
+                <div class="size-grid" id="sizeGrid">
+                    {% for size in product.available_sizes %}
+                    <input type="radio" name="size" id="size_{{ size }}" value="{{ size }}" class="size-radio" required>
+                    <label for="size_{{ size }}" class="size-chip">{{ size }}</label>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="option-group">
+                <label class="option-label">Quantity</label>
+                <div class="qty-selector">
+                    <button type="button" class="qty-btn" onclick="adjustQty(-1)">−</button>
+                    <input type="number" name="quantity" id="qtyInput" value="1" min="1" max="10" class="qty-input">
+                    <button type="button" class="qty-btn" onclick="adjustQty(1)">+</button>
+                </div>
+            </div>
+
+            {% if user %}
+            <button type="submit" class="btn btn-dark btn-full btn-lg">Add to Cart</button>
+            {% else %}
+            <a href="/login" class="btn btn-dark btn-full btn-lg">Sign In to Add to Cart</a>
+            {% endif %}
+        </form>
+
+        <div class="product-perks">
+            <div class="perk">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                <span>Free Shipping on orders over $50</span>
+            </div>
+            <div class="perk">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.51"></path></svg>
+                <span>Free 30-day returns</span>
+            </div>
+            <div class="perk">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>Authentic Nike product</span>
+            </div>
+        </div>
+
+        <div class="product-description">
+            <h3>Product Details</h3>
+            <p>{{ product.description }}</p>
+        </div>
+    </div>
+</div>
+
+{% if related %}
+<section class="section" style="margin-top: 60px;">
+    <div class="container">
+        <h2 class="section-title">You Might Also Like</h2>
+        <div class="products-grid products-grid-4">
+            {% for p in related %}
+            <a href="/products/{{ p.id }}" class="product-card">
+                <div class="product-image-wrap">
+                    <img src="{{ p.image_url }}" alt="{{ p.name }}" class="product-img" loading="lazy"
+                        onerror="this.src='https://via.placeholder.com/400x400/f5f5f5/111?text=Nike'">
+                </div>
+                <div class="product-info">
+                    <div class="product-category">{{ p.subcategory or p.category }}</div>
+                    <h3 class="product-name">{{ p.name }}</h3>
+                    <span class="product-price">${{ "%.2f"|format(p.price) }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<script>
+function adjustQty(delta) {
+    const input = document.getElementById('qtyInput');
+    const val = parseInt(input.value) + delta;
+    if (val >= 1 && val <= 10) input.value = val;
+}
+document.querySelectorAll('.color-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+        document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+    });
+});
+</script>
+{% endblock %}

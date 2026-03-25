@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}My Orders | Nike{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 40px; padding-bottom: 80px;">
+    <div class="breadcrumb">
+        <a href="/">Home</a> <span>/</span>
+        <span>My Orders</span>
+    </div>
+    <h1 class="page-title" style="margin: 16px 0 32px;">My Orders</h1>
+
+    {% if orders %}
+    <div class="orders-list">
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-card-header">
+                <div class="order-card-meta">
+                    <div class="order-meta-item">
+                        <span class="order-meta-label">Order Number</span>
+                        <span class="order-meta-value">{{ order.order_number }}</span>
+                    </div>
+                    <div class="order-meta-item">
+                        <span class="order-meta-label">Date</span>
+                        <span class="order-meta-value">{{ order.created_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                    <div class="order-meta-item">
+                        <span class="order-meta-label">Total</span>
+                        <span class="order-meta-value">${{ "%.2f"|format(order.total) }}</span>
+                    </div>
+                </div>
+                <div class="order-status-wrap">
+                    <span class="order-status order-status-{{ order.status }}">
+                        {% if order.status == 'confirmed' %}✓ Confirmed
+                        {% elif order.status == 'shipped' %}📦 Shipped
+                        {% elif order.status == 'delivered' %}🎉 Delivered
+                        {% else %}{{ order.status|title }}{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="order-card-items">
+                {% for item in order.items %}
+                <div class="order-item-row">
+                    <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" class="order-item-img"
+                        onerror="this.src='https://via.placeholder.com/60x60/f5f5f5/111?text=N'">
+                    <div class="order-item-info">
+                        <div class="order-item-name">{{ item.product.name }}</div>
+                        <div class="order-item-meta">Size: {{ item.size }} · Qty: {{ item.quantity }} · ${{ "%.2f"|format(item.unit_price) }} each</div>
+                    </div>
+                    <div class="order-item-total">${{ "%.2f"|format(item.unit_price * item.quantity) }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="order-card-footer">
+                <div class="order-ship-to">
+                    Shipping to: {{ order.shipping_first_name }} {{ order.shipping_last_name }}, {{ order.shipping_city }}, {{ order.shipping_state }}
+                </div>
+                <a href="/products" class="btn btn-sm btn-outline">Buy Again</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" style="padding: 80px 0;">
+        <div class="empty-icon">📦</div>
+        <h3>No orders yet</h3>
+        <p>Start shopping and your orders will appear here.</p>
+        <a href="/products" class="btn btn-dark" style="margin-top: 24px;">Shop Now</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Join Nike{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card auth-card-wide">
+        <div class="auth-logo">
+            <svg viewBox="0 0 80 30" fill="currentColor" class="auth-swoosh">
+                <path d="M79.6 1.2L26.4 23.7c-4.5 1.9-8.3 2.8-11.4 2.8-4.9 0-8.3-2.3-10.2-6.9L0 7.3l1-.4 4.4 5.5c1.7 2.1 3.8 3.1 6.3 3.1 2.1 0 4.7-.7 7.8-2.1L79.6 1.2z"/>
+            </svg>
+        </div>
+        <h2 class="auth-title">Become a Nike Member</h2>
+        <p class="auth-subtitle">Create your profile for all-access to anything Nike.</p>
+
+        {% if error %}
+        <div class="form-error-banner">{{ error }}</div>
+        {% endif %}
+
+        <form action="/register" method="post" class="auth-form">
+            <div class="form-grid form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="first_name" class="form-input" required placeholder="First name" autofocus>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="last_name" class="form-input" required placeholder="Last name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-input" required placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-input" required placeholder="Choose a username">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <div class="password-wrap">
+                    <input type="password" name="password" class="form-input" required placeholder="Min. 8 characters" id="passwordInput" minlength="6">
+                    <button type="button" class="password-toggle" onclick="togglePassword()">Show</button>
+                </div>
+            </div>
+            <div class="terms-text">
+                By creating an account, you agree to Nike's <a href="#">Privacy Policy</a> and <a href="#">Terms of Use</a>.
+            </div>
+            <button type="submit" class="btn btn-dark btn-full btn-lg">Join Us</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already a Member? <a href="/login" class="auth-link">Sign In</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    const input = document.getElementById('passwordInput');
+    const btn = document.querySelector('.password-toggle');
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = 'Hide';
+    } else {
+        input.type = 'password';
+        btn.textContent = 'Show';
+    }
+}
+</script>
+{% endblock %}

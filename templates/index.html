@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Nike. Just Do It{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-tag">New Release</div>
+        <h1 class="hero-title">Just Do It.</h1>
+        <p class="hero-subtitle">Elevate your game with the latest Nike innovation. Built for champions, worn by legends.</p>
+        <div class="hero-actions">
+            <a href="/products" class="btn btn-white">Shop Now</a>
+            <a href="/products?sort=newest" class="btn btn-outline-white">New Arrivals</a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="hero-circles">
+            <div class="circle c1"></div>
+            <div class="circle c2"></div>
+            <div class="circle c3"></div>
+        </div>
+        <img src="{{ featured[0].image_url if featured else '' }}" alt="Featured Shoe" class="hero-shoe" onerror="this.style.display='none'">
+    </div>
+</section>
+
+<section class="category-strip">
+    <div class="container">
+        <div class="category-cards">
+            <a href="/products?category=Shoes" class="cat-card">
+                <div class="cat-icon">👟</div>
+                <span>Shoes</span>
+            </a>
+            <a href="/products?category=Clothing" class="cat-card">
+                <div class="cat-icon">👕</div>
+                <span>Clothing</span>
+            </a>
+            <a href="/products?category=Accessories" class="cat-card">
+                <div class="cat-icon">🎒</div>
+                <span>Accessories</span>
+            </a>
+            <a href="/products?sort=newest" class="cat-card">
+                <div class="cat-icon">⭐</div>
+                <span>New Arrivals</span>
+            </a>
+            <a href="/products?is_sale=true" class="cat-card sale">
+                <div class="cat-icon">🔥</div>
+                <span>Sale</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+{% if featured %}
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured</h2>
+            <a href="/products" class="section-link">Shop All →</a>
+        </div>
+        <div class="products-grid">
+            {% for product in featured %}
+            <a href="/products/{{ product.id }}" class="product-card">
+                <div class="product-image-wrap">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy"
+                        onerror="this.src='https://via.placeholder.com/400x400/f5f5f5/111?text=Nike'">
+                    {% if product.is_new %}
+                    <span class="badge badge-new">New</span>
+                    {% endif %}
+                    {% if product.is_sale %}
+                    <span class="badge badge-sale">Sale</span>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <div class="product-category">{{ product.subcategory or product.category }}</div>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-rating">
+                        <div class="stars">
+                            {% for i in range(5) %}
+                            {% if i < product.rating|int %}
+                            <span class="star filled">★</span>
+                            {% else %}
+                            <span class="star">★</span>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="reviews-count">({{ product.reviews_count }})</span>
+                    </div>
+                    <div class="product-price-row">
+                        <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                        {% if product.original_price and product.original_price > product.price %}
+                        <span class="product-original-price">${{ "%.2f"|format(product.original_price) }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="promo-banner">
+    <div class="container">
+        <div class="promo-grid">
+            <div class="promo-card promo-dark">
+                <div class="promo-content">
+                    <span class="promo-tag">Members</span>
+                    <h3>Free Shipping</h3>
+                    <p>On all orders over $50. Join Nike Members today.</p>
+                    <a href="/register" class="btn btn-white btn-sm">Join Free</a>
+                </div>
+            </div>
+            <div class="promo-card promo-red">
+                <div class="promo-content">
+                    <span class="promo-tag">Limited Time</span>
+                    <h3>Up to 30% Off</h3>
+                    <p>Selected styles now on sale. Don't miss out.</p>
+                    <a href="/products?is_sale=true" class="btn btn-white btn-sm">Shop Sale</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if new_arrivals %}
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">New Arrivals</h2>
+            <a href="/products?sort=newest" class="section-link">View All →</a>
+        </div>
+        <div class="products-grid products-grid-4">
+            {% for product in new_arrivals %}
+            <a href="/products/{{ product.id }}" class="product-card">
+                <div class="product-image-wrap">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy"
+                        onerror="this.src='https://via.placeholder.com/400x400/f5f5f5/111?text=Nike'">
+                    <span class="badge badge-new">New</span>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">{{ product.subcategory or product.category }}</div>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="manifesto">
+    <div class="container">
+        <div class="manifesto-content">
+            <blockquote>"You can't put a limit on anything. The more you dream, the farther you get."</blockquote>
+            <cite>— Michael Phelps</cite>
+        </div>
+    </div>
+</section>
+{% endblock %}

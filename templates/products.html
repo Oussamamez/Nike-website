@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}{{ selected_category or 'All Products' }} | Nike{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">Home</a> <span>/</span>
+            {% if selected_category %}
+            <a href="/products">Products</a> <span>/</span>
+            <span>{{ selected_category }}</span>
+            {% else %}
+            <span>All Products</span>
+            {% endif %}
+        </div>
+        <h1 class="page-title">{{ selected_category or 'All Products' }}</h1>
+        {% if q %}<p class="search-info">Search results for "{{ q }}"</p>{% endif %}
+    </div>
+</div>
+
+<div class="shop-layout">
+    <aside class="filters-sidebar">
+        <div class="filter-group">
+            <h3>Category</h3>
+            <ul class="filter-list">
+                <li><a href="/products" class="{{ 'active' if not selected_category else '' }}">All</a></li>
+                {% for cat in categories %}
+                <li><a href="/products?category={{ cat }}" class="{{ 'active' if selected_category == cat else '' }}">{{ cat }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="filter-group">
+            <h3>Subcategory</h3>
+            <ul class="filter-list">
+                <li><a href="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}subcategory=Running" class="{{ 'active' if selected_subcategory == 'Running' else '' }}">Running</a></li>
+                <li><a href="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}subcategory=Basketball" class="{{ 'active' if selected_subcategory == 'Basketball' else '' }}">Basketball</a></li>
+                <li><a href="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}subcategory=Lifestyle" class="{{ 'active' if selected_subcategory == 'Lifestyle' else '' }}">Lifestyle</a></li>
+                <li><a href="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}subcategory=Football" class="{{ 'active' if selected_subcategory == 'Football' else '' }}">Football</a></li>
+                <li><a href="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}subcategory=Hoodies" class="{{ 'active' if selected_subcategory == 'Hoodies' else '' }}">Hoodies</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <div class="products-main">
+        <div class="products-toolbar">
+            <span class="products-count">{{ products|length }} Products</span>
+            <div class="sort-wrap">
+                <label>Sort by:</label>
+                <select class="sort-select" onchange="window.location.href=this.value">
+                    <option value="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}sort=featured" {{ 'selected' if sort == 'featured' else '' }}>Featured</option>
+                    <option value="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}sort=newest" {{ 'selected' if sort == 'newest' else '' }}>Newest</option>
+                    <option value="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}sort=price_asc" {{ 'selected' if sort == 'price_asc' else '' }}>Price: Low to High</option>
+                    <option value="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}sort=price_desc" {{ 'selected' if sort == 'price_desc' else '' }}>Price: High to Low</option>
+                    <option value="/products?{% if selected_category %}category={{ selected_category }}&{% endif %}sort=rating" {{ 'selected' if sort == 'rating' else '' }}>Top Rated</option>
+                </select>
+            </div>
+        </div>
+
+        {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <a href="/products/{{ product.id }}" class="product-card">
+                <div class="product-image-wrap">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy"
+                        onerror="this.src='https://via.placeholder.com/400x400/f5f5f5/111?text=Nike'">
+                    {% if product.is_new %}
+                    <span class="badge badge-new">New</span>
+                    {% endif %}
+                    {% if product.is_sale %}
+                    <span class="badge badge-sale">Sale</span>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <div class="product-category">{{ product.subcategory or product.category }}</div>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-rating">
+                        <div class="stars">
+                            {% for i in range(5) %}
+                            {% if i < product.rating|int %}
+                            <span class="star filled">★</span>
+                            {% else %}
+                            <span class="star">★</span>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="reviews-count">({{ product.reviews_count }})</span>
+                    </div>
+                    <div class="product-price-row">
+                        <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                        {% if product.original_price and product.original_price > product.price %}
+                        <span class="product-original-price">${{ "%.2f"|format(product.original_price) }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No products found</h3>
+            <p>Try a different category or search term.</p>
+            <a href="/products" class="btn btn-dark">Browse All</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
